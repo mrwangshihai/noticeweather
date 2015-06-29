@@ -47,12 +47,13 @@ public class NoticeWeatherDB {
     public List<City> getCitys(int provinceId){
         List<City> citys = new ArrayList<City>();
         Cursor cursor = db.query("city",null,"province_id=?",new String[]{String.valueOf(provinceId)},null,null,null,null);
-        if(cursor.moveToFirst()){
+
+        if(cursor.getCount() > 0 && cursor.moveToFirst()){
             do{
                 City city = new City();
-                city.setCity_id(cursor.getInt(cursor.getColumnIndex("city_id")));
-                city.setCity_code(cursor.getString(cursor.getColumnIndex("city_name")));
-                city.setCity_name(cursor.getString(cursor.getColumnIndex("city_code")));
+                city.setCity_id(cursor.getInt(cursor.getColumnIndex("id")));
+                city.setCity_code(cursor.getString(cursor.getColumnIndex("city_code")));
+                city.setCity_name(cursor.getString(cursor.getColumnIndex("city_name")));
                 city.setProvince_id(cursor.getInt(cursor.getColumnIndex("province_id")));
                 citys.add(city);
             }while (cursor.moveToNext());
@@ -72,7 +73,7 @@ public class NoticeWeatherDB {
         }
     }
 
-    public List<Province> getProvinces(int provinceId){
+    public List<Province> getProvinces(){
         List<Province> provinces = new ArrayList<Province>();
         Cursor cursor = db.query("province",null,null,null,null,null,null,null);
         if(cursor.moveToFirst()){
@@ -106,7 +107,7 @@ public class NoticeWeatherDB {
         if(cursor.moveToFirst()){
             do{
                 County county = new County();
-                county.setCity_id(cursor.getInt(cursor.getColumnIndex("county_id")));
+                county.setCity_id(cursor.getInt(cursor.getColumnIndex("id")));
                 county.setCounty_name(cursor.getString(cursor.getColumnIndex("county_name")));
                 county.setCounty_code(cursor.getString(cursor.getColumnIndex("county_code")));
                 county.setCity_id(cursor.getInt(cursor.getColumnIndex("city_id")));
