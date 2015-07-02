@@ -2,8 +2,10 @@ package com.wangshihai.noticeweather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +54,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences.getBoolean("county_selected",false)){
+            Intent intent = new Intent(MainActivity.this,WeatherActivity.class);
+            startActivity(intent);
+            finish();
+        }
         setContentView(R.layout.activity_main);
         listView = (ListView) findViewById(R.id.list);
         textView = (TextView) findViewById(R.id.title);
@@ -68,6 +75,12 @@ public class MainActivity extends Activity {
                 }else if(currentLevel == CITY_LEVEL){
                     selectedCity = citys.get(position);
                     queryCountys();
+                }else if(currentLevel == COUNTY_LEVEL){
+                    String countyCode = countys.get(position).getCounty_code();
+                    Intent intent = new Intent(MainActivity.this,WeatherActivity.class);
+                    intent.putExtra("countyCode",countyCode);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });

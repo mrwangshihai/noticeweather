@@ -1,11 +1,21 @@
 package com.wangshihai.noticeweather.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.wangshihai.noticeweather.db.NoticeWeatherDB;
 import com.wangshihai.noticeweather.model.City;
 import com.wangshihai.noticeweather.model.County;
 import com.wangshihai.noticeweather.model.Province;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by shiha on 2015-06-28.
@@ -72,6 +82,38 @@ public class JSONUtil {
         }else{
             return false;
         }
+    }
+
+    public static  void handleWeatherResponse(Context context,String response){
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONObject weatherInfo = jsonObject.getJSONObject("weatherinfo");
+            String countyName = weatherInfo.getString("city");
+            String weatherCode = weatherInfo.getString("cityid");
+            String temp1 = weatherInfo.getString("temp1");
+            String temp2 = weatherInfo.getString("temp2");
+            String weatherDesp = weatherInfo.getString("weather");
+            String pushTime = weatherInfo.getString("ptime");
+            saveWeathInfo(context,countyName,pushTime,temp1,temp2,weatherDesp,weatherCode);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void saveWeathInfo(Context context,String countyName,String pushTime,String temp1,String temp2,String weathInfo,String weatherCode){
+        SimpleDateFormat simpleDateFormat
+                = new SimpleDateFormat("yyyy年M月d日 HH时mm分ss秒", Locale.CHINA);
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putBoolean("county_selected",true);
+        editor.putString("county_name",countyName);
+        editor.putString("pushTime",pushTime);
+        editor.putString("temp1",temp1);
+        editor.putString("temp2",temp2);
+        editor.putString("weathInfo",weathInfo);
+        editor.putString("weatherCode",weatherCode);
+        editor.putString("current_time",simpleDateFormat.format(Calendar.getInstance().getTime()));
+        editor.commit();
     }
 
 }
