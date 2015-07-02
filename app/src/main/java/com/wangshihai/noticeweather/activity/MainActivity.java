@@ -48,14 +48,16 @@ public class MainActivity extends Activity {
     private static final int CITY_LEVEL = 1;
     private static final  int COUNTY_LEVEL = 2;
     private ProgressDialog progressDialog;
+    private boolean isFromWeatherActivity;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity",false);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(sharedPreferences.getBoolean("county_selected",false)){
+        if(sharedPreferences.getBoolean("county_selected",false) && !isFromWeatherActivity){
             Intent intent = new Intent(MainActivity.this,WeatherActivity.class);
             startActivity(intent);
             finish();
@@ -230,6 +232,10 @@ public class MainActivity extends Activity {
         }else if(currentLevel == CITY_LEVEL){
             queryProvince();
         }else{
+            if(isFromWeatherActivity){
+                Intent intent = new Intent(this,WeatherActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
     }

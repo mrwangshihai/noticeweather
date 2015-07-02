@@ -1,12 +1,15 @@
 package com.wangshihai.noticeweather.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,7 +21,7 @@ import com.wangshihai.noticeweather.util.JSONUtil;
 /**
  * Created by shiha on 2015-07-02.
  */
-public class WeatherActivity extends Activity {
+public class WeatherActivity extends Activity implements View.OnClickListener {
     private LinearLayout linearLayout;
     private TextView pushTime;
     private TextView cityNameText;
@@ -26,6 +29,8 @@ public class WeatherActivity extends Activity {
     private TextView temp1;
     private TextView temp2;
     private TextView currentTime;
+    private Button homeButton;
+    private Button refreshButton;
 
 
     @Override
@@ -49,6 +54,10 @@ public class WeatherActivity extends Activity {
         }else{
             showWeather();
         }
+        homeButton = (Button) findViewById(R.id.home);
+        refreshButton = (Button) findViewById(R.id.refresh);
+        refreshButton.setOnClickListener(this);
+        homeButton.setOnClickListener(this);
     }
 
     private void queryWeatherCode(String countyCode){
@@ -110,5 +119,35 @@ public class WeatherActivity extends Activity {
 
 
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.home:
+                Intent intent = new Intent(this,MainActivity.class);
+                intent.putExtra("from_weather_activity",true);
+                startActivity(intent);
+                finish();
+                break;
+            case  R.id.refresh:
+                pushTime.setText("同步中...");
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                String countyCode = sharedPreferences.getString("weatherCode","");
+                if(!TextUtils.isEmpty(countyCode)){
+                    queryWeather(countyCode);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.putExtra("from_weather_activity",true);
+        startActivity(intent);
+        finish();
     }
 }
